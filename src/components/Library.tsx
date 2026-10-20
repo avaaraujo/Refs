@@ -659,6 +659,18 @@ export default function Library() {
         </div>
       )}
 
+      <footer className="mt-16 text-center text-xs" style={{ color: "var(--muted)" }}>
+        <span className="opacity-60">Feito por </span>
+        <a
+          href="https://avaaraujo.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="opacity-60 underline-offset-4 transition hover:text-[var(--accent)] hover:underline hover:opacity-100"
+        >
+          Avá Araujo
+        </a>
+      </footer>
+
       <AddModal
         open={modalOpen}
         initialUrl={pendingUrl ?? undefined}
