@@ -6,6 +6,7 @@ import { FolderSimple, PencilSimple, Plus, Trash, X } from "@phosphor-icons/reac
 import type { Collection } from "@/lib/types";
 import { publicImageUrl } from "@/lib/publicUrl";
 import { timeAgo } from "@/lib/timeAgo";
+import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
 
 function Mosaic({ thumbnails }: { thumbnails: string[] }) {
   if (thumbnails.length === 0) {
@@ -61,6 +62,8 @@ export default function CollectionsPanel({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
+
+  useBodyScrollLock(open);
 
   if (!open) return null;
 
@@ -124,7 +127,7 @@ export default function CollectionsPanel({
         role="dialog"
         aria-modal="true"
         aria-label="Coleções"
-        className="scroll-thin relative flex h-full w-full max-w-sm flex-col overflow-hidden border-l"
+        className="scroll-thin relative flex h-dvh w-full max-w-sm flex-col overflow-hidden border-l"
         style={{ background: "var(--card)", borderColor: "var(--border)" }}
       >
         <div
@@ -135,7 +138,7 @@ export default function CollectionsPanel({
           <button
             onClick={onClose}
             aria-label="Fechar"
-            className="rounded-lg p-1.5 opacity-60 hover:opacity-100"
+            className="-m-1 rounded-lg p-2.5 opacity-60 hover:opacity-100 sm:m-0 sm:p-1.5"
           >
             <X size={16} />
           </button>
@@ -174,18 +177,18 @@ export default function CollectionsPanel({
                     </div>
                   </button>
                   {authed && (
-                    <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition group-hover:opacity-100">
+                    <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100">
                       <button
                         onClick={() => renameCollection(c)}
                         aria-label={`Renomear ${c.name}`}
-                        className="rounded-lg p-1.5 opacity-60 hover:opacity-100"
+                        className="rounded-lg p-1.5 opacity-60 hover:opacity-100 pointer-coarse:p-3"
                       >
                         <PencilSimple size={14} />
                       </button>
                       <button
                         onClick={() => deleteCollection(c)}
                         aria-label={`Apagar ${c.name}`}
-                        className="rounded-lg p-1.5 opacity-60 hover:opacity-100"
+                        className="rounded-lg p-1.5 opacity-60 hover:opacity-100 pointer-coarse:p-3"
                         style={{ color: "var(--danger)" }}
                       >
                         <Trash size={14} />

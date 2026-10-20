@@ -341,11 +341,11 @@ export default function Library() {
 
   return (
     <div className="px-4 pb-8 sm:px-6 lg:px-8">
-      <div className="sticky top-0 z-30 pt-8 pb-2" style={{ background: "var(--bg)" }}>
-      <header className="mb-6">
-        <div className="flex flex-wrap items-center gap-4">
+      <div className="pt-5 pb-2 sm:sticky sm:top-0 sm:z-30 sm:pt-8" style={{ background: "var(--bg)" }}>
+      <header className="mb-4 sm:mb-6">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
           <div className="mr-auto">
-            <h1 className="font-display text-3xl tracking-tight sm:text-4xl">
+            <h1 className="font-display text-2xl tracking-tight sm:text-4xl">
               Refs do Avá<span style={{ color: "var(--accent)" }}>.</span>
             </h1>
             <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>
@@ -354,7 +354,7 @@ export default function Library() {
           </div>
 
           <div
-            className="flex items-center gap-2 rounded-xl border px-3 py-2"
+            className="order-last flex w-full items-center gap-2 rounded-xl border px-3 py-2 sm:order-none sm:w-auto"
             style={{ borderColor: "var(--border)" }}
           >
             <MagnifyingGlass size={16} style={{ color: "var(--muted)" }} />
@@ -363,14 +363,14 @@ export default function Library() {
               onChange={(e) => setSearch(e.target.value)}
               placeholder={semanticMode ? "Buscar por descrição..." : "Buscar por título, tag, descrição..."}
               aria-label="Buscar referências"
-              className="w-40 bg-transparent text-sm outline-none sm:w-64"
+              className="min-w-0 flex-1 bg-transparent text-sm outline-none sm:w-64 sm:flex-none"
             />
             <button
               onClick={() => setSemanticMode((v) => !v)}
               aria-label="Alternar busca semântica"
               aria-pressed={semanticMode}
               title={semanticMode ? "Busca semântica ligada" : "Busca por texto exato"}
-              className="shrink-0 rounded-md p-1 transition"
+              className="-m-1 shrink-0 rounded-md p-2 transition sm:m-0 sm:p-1"
               style={{ color: semanticMode ? "var(--accent)" : "var(--muted)" }}
             >
               <Sparkle
@@ -381,13 +381,13 @@ export default function Library() {
             </button>
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5">
             <button
               onClick={() => setFiltersOpen((v) => !v)}
               aria-label="Filtros"
               aria-expanded={filtersOpen}
               title="Filtros"
-              className="relative rounded-xl border p-2.5 transition"
+              className="relative rounded-xl border p-3 sm:p-2.5 transition"
               style={{
                 borderColor: filtersOpen || activeFilterCount > 0 ? "var(--accent)" : "var(--border)",
                 color: filtersOpen || activeFilterCount > 0 ? "var(--accent)" : "var(--muted)",
@@ -413,7 +413,7 @@ export default function Library() {
                 onClick={() => setCollectionsPanelOpen(true)}
                 aria-label="Coleções"
                 title="Coleções"
-                className="rounded-xl border p-2.5 transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                className="rounded-xl border p-3 sm:p-2.5 transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
                 style={{ borderColor: "var(--border)", color: "var(--muted)" }}
               >
                 <FolderSimple size={16} />
@@ -425,7 +425,7 @@ export default function Library() {
                 onClick={copyBoardBrief}
                 aria-label="Copiar brief do board"
                 title="Copiar brief do board"
-                className="rounded-xl border p-2.5 transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                className="rounded-xl border p-3 sm:p-2.5 transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
                 style={{ borderColor: "var(--border)", color: "var(--muted)" }}
               >
                 <ClipboardText size={16} />
@@ -439,7 +439,7 @@ export default function Library() {
                   disabled={retagging}
                   aria-label="Re-taggear acervo"
                   title="Re-taggear itens sem recipe/embedding atualizados"
-                  className="rounded-xl border p-2.5 opacity-60 hover:opacity-100 disabled:opacity-30"
+                  className="rounded-xl border p-3 sm:p-2.5 opacity-60 hover:opacity-100 disabled:opacity-30"
                   style={{ borderColor: "var(--border)" }}
                 >
                   <ArrowsClockwise size={16} className={retagging ? "animate-spin" : undefined} />
@@ -449,7 +449,7 @@ export default function Library() {
                   disabled={backfillingImages}
                   aria-label="Buscar prints espalhados nas refs antigas"
                   title="Buscar os prints espalhados (hero + 3) nas refs que só têm a capa"
-                  className="rounded-xl border p-2.5 opacity-60 hover:opacity-100 disabled:opacity-30"
+                  className="rounded-xl border p-3 sm:p-2.5 opacity-60 hover:opacity-100 disabled:opacity-30"
                   style={{ borderColor: "var(--border)" }}
                 >
                   <ImagesSquare size={16} className={backfillingImages ? "animate-pulse" : undefined} />
@@ -458,7 +458,7 @@ export default function Library() {
                   onClick={() => setModalOpen(true)}
                   aria-label="Adicionar"
                   title="Adicionar"
-                  className="rounded-xl p-2.5 transition hover:brightness-90"
+                  className="rounded-xl p-3 sm:p-2.5 transition hover:brightness-90"
                   style={{ background: "var(--accent)", color: "var(--on-accent)" }}
                 >
                   <Plus size={16} weight="bold" />
@@ -467,7 +467,7 @@ export default function Library() {
                   onClick={handleLogout}
                   aria-label="Sair"
                   title="Sair"
-                  className="rounded-xl border p-2.5 opacity-60 hover:opacity-100"
+                  className="rounded-xl border p-3 sm:p-2.5 opacity-60 hover:opacity-100"
                   style={{ borderColor: "var(--border)" }}
                 >
                   <LockOpen size={16} />
@@ -478,7 +478,7 @@ export default function Library() {
                 onClick={() => setLoginOpen(true)}
                 aria-label="Entrar"
                 title="Entrar"
-                className="rounded-xl border p-2.5 transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                className="rounded-xl border p-3 sm:p-2.5 transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
                 style={{ borderColor: "var(--border)", color: "var(--muted)" }}
               >
                 <Lock size={16} />
@@ -503,7 +503,7 @@ export default function Library() {
               value={activeCategory ?? ""}
               onChange={(e) => setActiveCategory(e.target.value || null)}
               aria-label="Filtrar por categoria"
-              className="rounded-xl border bg-transparent px-2.5 py-2 text-sm outline-none"
+              className="rounded-xl border bg-transparent px-2.5 py-2 text-sm outline-none max-sm:min-w-[45%] max-sm:flex-1 max-sm:py-3"
               style={{ borderColor: "var(--border)", color: "var(--muted)" }}
             >
               <option value="">Categoria</option>
@@ -518,7 +518,7 @@ export default function Library() {
               value={activeStyle ?? ""}
               onChange={(e) => setActiveStyle(e.target.value || null)}
               aria-label="Filtrar por estilo"
-              className="rounded-xl border bg-transparent px-2.5 py-2 text-sm outline-none"
+              className="rounded-xl border bg-transparent px-2.5 py-2 text-sm outline-none max-sm:min-w-[45%] max-sm:flex-1 max-sm:py-3"
               style={{ borderColor: "var(--border)", color: "var(--muted)" }}
             >
               <option value="">Estilo</option>
@@ -530,7 +530,7 @@ export default function Library() {
             </select>
 
             <div
-              className="flex items-center gap-1.5 rounded-xl border px-2.5 py-2"
+              className="flex items-center gap-1.5 rounded-xl border px-2.5 py-2 max-sm:min-w-[45%] max-sm:flex-1 max-sm:py-3"
               style={{ borderColor: "var(--border)" }}
             >
               <button
@@ -538,7 +538,7 @@ export default function Library() {
                 onClick={() => colorInputRef.current?.click()}
                 aria-label="Escolher cor pra buscar referências parecidas"
                 title="Buscar por cor próxima (não precisa ser exata)"
-                className="h-4 w-4 shrink-0 rounded-full border"
+                className="h-5 w-5 shrink-0 rounded-full border sm:h-4 sm:w-4"
                 style={{
                   background: pickedColor ?? "transparent",
                   borderColor: pickedColor ? "var(--border)" : "var(--muted)",
@@ -571,12 +571,12 @@ export default function Library() {
                     onChange={(e) => setColorTolerance(Number(e.target.value))}
                     aria-label="Sensibilidade da busca por cor"
                     title="Quanto maior, mais tons parecidos entram no resultado"
-                    className="w-16 accent-[var(--accent)]"
+                    className="w-20 accent-[var(--accent)] sm:w-16"
                   />
                   <button
                     onClick={() => setPickedColor(null)}
                     aria-label="Limpar filtro de cor"
-                    className="shrink-0 opacity-60 hover:opacity-100"
+                    className="-m-2 shrink-0 p-2 opacity-60 hover:opacity-100 sm:m-0 sm:p-0"
                   >
                     <X size={12} />
                   </button>
@@ -589,7 +589,7 @@ export default function Library() {
                 value={activeCollection ?? ""}
                 onChange={(e) => setActiveCollection(e.target.value || null)}
                 aria-label="Filtrar por coleção"
-                className="rounded-xl border bg-transparent px-2.5 py-2 text-sm outline-none"
+                className="rounded-xl border bg-transparent px-2.5 py-2 text-sm outline-none max-sm:min-w-[45%] max-sm:flex-1 max-sm:py-3"
                 style={{ borderColor: "var(--border)", color: "var(--muted)" }}
               >
                 <option value="">Coleção</option>
@@ -605,11 +605,11 @@ export default function Library() {
       </header>
 
       {allTags.length > 0 && (
-        <div className="mb-6 flex flex-wrap items-center gap-2">
+        <div className="scrollbar-none -mx-4 mb-4 flex items-center gap-2 overflow-x-auto px-4 sm:mx-0 sm:mb-6 sm:flex-wrap sm:overflow-visible sm:px-0">
           {activeTag && (
             <button
               onClick={() => setActiveTag(null)}
-              className="flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition hover:brightness-90"
+              className="flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1.5 text-xs font-medium whitespace-nowrap transition hover:brightness-90 sm:py-1"
               style={{ background: "var(--accent)", color: "var(--on-accent)" }}
             >
               {activeTag}
@@ -623,7 +623,7 @@ export default function Library() {
               <button
                 key={tag}
                 onClick={() => setActiveTag(tag)}
-                className="rounded-full border border-[var(--border)] px-2.5 py-1 text-xs text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                className="shrink-0 rounded-full border border-[var(--border)] px-2.5 py-1.5 text-xs whitespace-nowrap text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] sm:py-1"
               >
                 {tag} <span className="opacity-60">{count}</span>
               </button>
@@ -645,7 +645,7 @@ export default function Library() {
           </p>
         </div>
       ) : (
-        <div className="columns-2 gap-4 sm:columns-3 lg:columns-4 xl:columns-5 2xl:columns-6">
+        <div className="columns-2 gap-3 sm:columns-3 sm:gap-4 lg:columns-4 xl:columns-5 2xl:columns-6">
           {filtered.map((item) => (
             <ItemCard
               key={item.id}
