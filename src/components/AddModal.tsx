@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { X, UploadSimple, LinkSimple } from "@phosphor-icons/react/dist/ssr";
 import type { Item } from "@/lib/types";
 import { normalizeUrl } from "@/lib/normalizeUrl";
+import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
 
 export default function AddModal({
   open,
@@ -30,6 +31,8 @@ export default function AddModal({
   useEffect(() => {
     if (open && initialUrl) setUrl(initialUrl);
   }, [open, initialUrl]);
+
+  useBodyScrollLock(open);
 
   if (!open) return null;
 
@@ -76,14 +79,14 @@ export default function AddModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center sm:p-4"
       onClick={onClose}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="add-modal-title"
-        className="w-full max-w-md rounded-2xl border p-6"
+        className="max-h-dvh w-full max-w-md overflow-y-auto overscroll-contain rounded-t-2xl border p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:rounded-2xl sm:p-6"
         style={{ background: "var(--card)", borderColor: "var(--border)" }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -91,7 +94,7 @@ export default function AddModal({
           <h2 id="add-modal-title" className="text-lg font-semibold">
             Nova referência
           </h2>
-          <button onClick={onClose} aria-label="Fechar" className="opacity-60 hover:opacity-100">
+          <button onClick={onClose} aria-label="Fechar" className="-m-2 p-2 opacity-60 hover:opacity-100">
             <X size={20} />
           </button>
         </div>
@@ -108,7 +111,7 @@ export default function AddModal({
               <>
                 <UploadSimple size={24} />
                 <span className="text-sm" style={{ color: "var(--muted)" }}>
-                  Clique para enviar um print
+                  Toque ou clique para enviar um print
                 </span>
               </>
             )}
@@ -160,7 +163,7 @@ export default function AddModal({
           <button
             type="submit"
             disabled={loading}
-            className="rounded-xl px-4 py-2.5 text-sm font-medium transition hover:brightness-90 disabled:opacity-50 disabled:hover:brightness-100"
+            className="rounded-xl px-4 py-3 text-sm font-medium transition hover:brightness-90 disabled:opacity-50 disabled:hover:brightness-100 sm:py-2.5"
             style={{ background: "var(--accent)", color: "var(--on-accent)" }}
           >
             {loading ? "Salvando e gerando tags..." : "Salvar referência"}

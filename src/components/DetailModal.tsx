@@ -18,6 +18,7 @@ import { publicImageUrl } from "@/lib/publicUrl";
 import { timeAgo } from "@/lib/timeAgo";
 import { colorSwatches } from "@/lib/colorSwatch";
 import { buildItemBrief } from "@/lib/brief";
+import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
 import type { Item, Collection } from "@/lib/types";
 
 // linha compacta pra dentro do cluster de taxonomia: sem borda própria,
@@ -115,6 +116,9 @@ export default function DetailModal({
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [uploadingImage, setUploadingImage] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+
+  useBodyScrollLock(Boolean(item));
 
   useEffect(() => {
     setNotes(item?.notes ?? "");
@@ -144,6 +148,17 @@ export default function DetailModal({
   }, [onClose, onNavigate, hasPrev, hasNext]);
 
   if (!item) return null;
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    const start = touchStart.current;
+    touchStart.current = null;
+    if (!start) return;
+    const dx = e.changedTouches[0].clientX - start.x;
+    const dy = e.changedTouches[0].clientY - start.y;
+    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    if (dx < 0 && hasNext) onNavigate(1);
+    if (dx > 0 && hasPrev) onNavigate(-1);
+  }
 
   const hasTaxonomy = item.style.length > 0 || Boolean(item.color) || item.tech.length > 0 || item.tags.length > 0;
   const hasRecipe = (item.recipe_tags?.length ?? 0) > 0;
@@ -294,7 +309,7 @@ export default function DetailModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center gap-8 bg-black/60 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center gap-8 bg-black/60 sm:p-4"
       onClick={onClose}
     >
       {/* botão fica invisible (não "hidden") quando não há anterior/próximo,
@@ -319,7 +334,7 @@ export default function DetailModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="detail-modal-title"
-        className="flex max-h-[90vh] w-full flex-col overflow-hidden rounded-2xl border sm:h-[min(78vh,480px)] sm:w-fit sm:flex-row lg:h-[min(80vh,640px)] xl:h-[min(82vh,760px)]"
+        className="scroll-thin flex h-full w-full flex-col overflow-y-auto overscroll-contain sm:h-[min(78vh,480px)] sm:max-h-[90vh] sm:w-fit sm:flex-row sm:overflow-hidden sm:rounded-2xl sm:border lg:h-[min(80vh,640px)] xl:h-[min(82vh,760px)]"
         style={{ background: "var(--card)", borderColor: "var(--border)" }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -334,7 +349,13 @@ export default function DetailModal({
             largura toda sem barras laterais — 7:5 (1.4) é o ajuste que
             compensa a tira sem medir pixel a pixel por breakpoint. */}
         <div className="flex shrink-0 aspect-[7/5] flex-col sm:h-full">
-          <div className="relative min-h-0 flex-1">
+          <div
+            className="relative min-h-0 flex-1"
+            onTouchStart={(e) => {
+              touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }}
+            onTouchEnd={handleTouchEnd}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={publicImageUrl(activeImage.image_path)}
@@ -342,6 +363,24 @@ export default function DetailModal({
               className="h-full w-full object-contain"
               style={{ viewTransitionName: activeImageIndex === 0 ? "card-img" : undefined }}
             />
+            {hasPrev && (
+              <button
+                onClick={() => onNavigate(-1)}
+                aria-label="Referência anterior"
+                className="absolute top-1/2 left-2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur sm:hidden"
+              >
+                <CaretLeft size={18} weight="bold" />
+              </button>
+            )}
+            {hasNext && (
+              <button
+                onClick={() => onNavigate(1)}
+                aria-label="Próxima referência"
+                className="absolute top-1/2 right-2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur sm:hidden"
+              >
+                <CaretRight size={18} weight="bold" />
+              </button>
+            )}
             {item.url && (
               <div
                 className="absolute inset-x-0 bottom-0 flex justify-start p-3 pt-8"
@@ -413,7 +452,7 @@ export default function DetailModal({
           )}
         </div>
 
-        <div className="flex w-full flex-col overflow-hidden sm:w-[400px] sm:shrink-0 lg:w-[440px] xl:w-[500px]">
+        <div className="flex w-full shrink-0 flex-col sm:w-[400px] sm:overflow-hidden lg:w-[440px] xl:w-[500px]">
           <div className="flex items-start justify-between gap-3 p-5 pb-3.5 lg:p-6 lg:pb-4">
             <div>
               {item.category && (
@@ -434,12 +473,12 @@ export default function DetailModal({
                 {timeAgo(item.created_at)}
               </p>
             </div>
-            <button onClick={onClose} aria-label="Fechar" className="shrink-0 opacity-60 hover:opacity-100">
+            <button onClick={onClose} aria-label="Fechar" className="hidden shrink-0 opacity-60 hover:opacity-100 sm:block">
               <X size={18} />
             </button>
           </div>
 
-          <div className="scroll-thin flex-1 overflow-y-auto px-5 lg:px-6">
+          <div className="scroll-thin px-5 sm:flex-1 sm:overflow-y-auto lg:px-6">
             {hasInfo && (
               <AccordionSection
                 label="Info & notas"
@@ -471,7 +510,7 @@ export default function DetailModal({
                           <button
                             onClick={saveNotes}
                             disabled={savingNotes}
-                            className="flex w-fit items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium transition hover:brightness-90 disabled:opacity-50 disabled:hover:brightness-100"
+                            className="flex w-fit items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium transition hover:brightness-90 disabled:opacity-50 disabled:hover:brightness-100 max-sm:py-2"
                             style={{ background: "var(--accent)", color: "var(--on-accent)" }}
                           >
                             <Check size={12} /> Salvar
@@ -504,7 +543,7 @@ export default function DetailModal({
                                 onClick={() => toggleCollection(c.id)}
                                 disabled={savingCollection}
                                 aria-pressed={active}
-                                className="rounded-full border px-2.5 py-1 text-xs transition disabled:opacity-50"
+                                className="rounded-full border px-2.5 py-1 text-xs transition disabled:opacity-50 max-sm:py-1.5"
                                 style={{
                                   borderColor: active ? "var(--accent)" : "var(--border)",
                                   background: active ? "var(--accent)" : "transparent",
@@ -558,7 +597,7 @@ export default function DetailModal({
                               onClick={() => copyHex(hex)}
                               title={`Copiar ${hex}`}
                               aria-label={`Copiar cor ${hex}`}
-                              className="h-3.5 w-3.5 rounded-sm border transition hover:scale-125"
+                              className="h-3.5 w-3.5 rounded-sm border transition hover:scale-125 max-sm:h-6 max-sm:w-6"
                               style={{ background: hex, borderColor: "var(--border)" }}
                             />
                           ))}
@@ -613,12 +652,12 @@ export default function DetailModal({
             )}
           </div>
 
-          <div className="border-t p-5 lg:p-6" style={{ borderColor: "var(--border)" }}>
+          <div className="border-t p-5 max-sm:pb-[calc(1.25rem+env(safe-area-inset-bottom))] lg:p-6" style={{ borderColor: "var(--border)" }}>
             {hasTaxonomy && (
               <div className="flex gap-2">
                 <button
                   onClick={copyBrief}
-                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border px-2.5 py-2 text-xs font-medium transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border px-2.5 py-2 text-xs font-medium transition hover:border-[var(--accent)] hover:text-[var(--accent)] max-sm:py-3"
                   style={{ borderColor: "var(--border)" }}
                 >
                   <ClipboardText size={14} /> Copiar brief
@@ -626,7 +665,7 @@ export default function DetailModal({
                 {item.site_recipe && (
                   <button
                     onClick={copySiteRecipe}
-                    className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border px-2.5 py-2 text-xs font-medium transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                    className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border px-2.5 py-2 text-xs font-medium transition hover:border-[var(--accent)] hover:text-[var(--accent)] max-sm:py-3"
                     style={{ borderColor: "var(--border)" }}
                   >
                     <ClipboardText size={14} /> Copiar site recipe
@@ -646,7 +685,7 @@ export default function DetailModal({
                       <button
                         onClick={recapture}
                         disabled={recapturing}
-                        className="flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-50"
+                        className="flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-50 max-sm:py-2.5"
                         style={{ borderColor: "var(--border)" }}
                       >
                         <ArrowClockwise size={13} className={recapturing ? "animate-spin" : undefined} />
@@ -677,7 +716,7 @@ export default function DetailModal({
                       onDelete(item.id);
                       onClose();
                     }}
-                    className="flex w-fit items-center gap-1.5 text-xs transition hover:opacity-80"
+                    className="flex w-fit items-center gap-1.5 text-xs max-sm:py-2 transition hover:opacity-80"
                     style={{ color: "var(--danger)" }}
                   >
                     <Trash size={14} /> Apagar referência
@@ -685,7 +724,7 @@ export default function DetailModal({
                   {activeImageIndex > 0 && (
                     <button
                       onClick={() => deleteImage(gallery[activeImageIndex].id!)}
-                      className="flex w-fit items-center gap-1.5 text-xs opacity-70 transition hover:opacity-100"
+                      className="flex w-fit items-center gap-1.5 text-xs max-sm:py-2 opacity-70 transition hover:opacity-100"
                       style={{ color: "var(--danger)" }}
                     >
                       <Trash size={14} /> Apagar este print
@@ -697,6 +736,13 @@ export default function DetailModal({
           </div>
         </div>
       </div>
+      <button
+        onClick={onClose}
+        aria-label="Fechar"
+        className="fixed top-[max(0.75rem,env(safe-area-inset-top))] right-3 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur sm:hidden"
+      >
+        <X size={20} />
+      </button>
       <button
         onClick={(e) => {
           e.stopPropagation();

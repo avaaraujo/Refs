@@ -22,7 +22,8 @@ export default function ItemCard({
   const cardRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
 
-  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+  function handleMouseMove(e: React.PointerEvent<HTMLDivElement>) {
+    if (e.pointerType !== "mouse") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const el = cardRef.current;
     if (!el) return;
@@ -53,11 +54,11 @@ export default function ItemCard({
       role="button"
       tabIndex={0}
       aria-label={`Abrir referência: ${item.title ?? "sem título"}`}
-      className="group mb-4 break-inside-avoid cursor-pointer overflow-hidden rounded-xl border transition-[transform,box-shadow,border-color] duration-150 will-change-transform hover:shadow-lg"
+      className="group mb-3 break-inside-avoid cursor-pointer overflow-hidden rounded-xl border transition-[transform,box-shadow,border-color] duration-150 hover:shadow-lg sm:mb-4 pointer-fine:will-change-transform"
       style={{ borderColor: hover ? "var(--accent)" : "var(--border)", background: "var(--card)" }}
-      onMouseEnter={() => setHover(true)}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={resetTilt}
+      onPointerEnter={(e) => e.pointerType === "mouse" && setHover(true)}
+      onPointerMove={handleMouseMove}
+      onPointerLeave={resetTilt}
       onClick={() => onOpen(item)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -74,6 +75,7 @@ export default function ItemCard({
           data-card-img={item.id}
           className="w-full object-cover"
           loading="lazy"
+          decoding="async"
         />
         {item.images.length > 0 && (
           <span className="absolute top-2 left-2 rounded-full bg-black/60 px-1.5 py-0.5 text-[10px] text-white backdrop-blur">
@@ -82,7 +84,7 @@ export default function ItemCard({
         )}
         {/* sempre no DOM (não só em hover) pra ficar alcançável via Tab;
             visibilidade é só CSS, revelada por mouse OU foco de teclado */}
-        <div className="absolute inset-x-0 top-0 flex justify-end gap-1 p-2 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+        <div className="absolute inset-x-0 top-0 flex justify-end gap-1 p-2 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:hidden">
           {item.url && (
             <a
               href={item.url}
@@ -115,7 +117,7 @@ export default function ItemCard({
           </div>
         )}
       </div>
-      <div className="p-3">
+      <div className="p-2.5 sm:p-3">
         {item.category && (
           <p
             className="mb-1 text-[10px] font-bold uppercase tracking-wide"
@@ -128,7 +130,7 @@ export default function ItemCard({
           {item.title}
         </p>
         {item.description && (
-          <p className="mt-0.5 text-xs" style={{ color: "var(--muted)" }}>
+          <p className="mt-0.5 line-clamp-2 text-xs sm:line-clamp-none" style={{ color: "var(--muted)" }}>
             {item.description}
           </p>
         )}
@@ -141,7 +143,7 @@ export default function ItemCard({
                   e.stopPropagation();
                   onTagClick(tag);
                 }}
-                className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[11px] text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[11px] text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] max-sm:nth-[n+4]:hidden"
               >
                 {tag}
               </button>

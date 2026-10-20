@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { X, Lock } from "@phosphor-icons/react/dist/ssr";
 import { createClient } from "@/lib/supabase/client";
+import { useBodyScrollLock } from "@/lib/useBodyScrollLock";
 
 export default function LoginModal({
   open,
@@ -17,6 +18,8 @@ export default function LoginModal({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useBodyScrollLock(open);
 
   if (!open) return null;
 
@@ -52,7 +55,7 @@ export default function LoginModal({
           <h2 id="login-modal-title" className="flex items-center gap-1.5 text-lg font-semibold">
             <Lock size={16} /> Entrar
           </h2>
-          <button onClick={onClose} aria-label="Fechar" className="opacity-60 hover:opacity-100">
+          <button onClick={onClose} aria-label="Fechar" className="-m-2 p-2 opacity-60 hover:opacity-100">
             <X size={20} />
           </button>
         </div>
@@ -65,7 +68,7 @@ export default function LoginModal({
             aria-label="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="rounded-xl border px-3 py-2 text-sm outline-none"
+            className="rounded-xl border px-3 py-3 text-sm outline-none sm:py-2"
             style={{ borderColor: "var(--border)", background: "transparent" }}
           />
           <input
@@ -75,13 +78,13 @@ export default function LoginModal({
             aria-label="Senha"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="rounded-xl border px-3 py-2 text-sm outline-none"
+            className="rounded-xl border px-3 py-3 text-sm outline-none sm:py-2"
             style={{ borderColor: "var(--border)", background: "transparent" }}
           />
           <button
             type="submit"
             disabled={loading || !email || !password}
-            className="rounded-xl px-4 py-2.5 text-sm font-medium transition hover:brightness-90 disabled:opacity-50 disabled:hover:brightness-100"
+            className="rounded-xl px-4 py-3 text-sm font-medium transition hover:brightness-90 disabled:opacity-50 disabled:hover:brightness-100 sm:py-2.5"
             style={{ background: "var(--accent)", color: "var(--on-accent)" }}
           >
             {loading ? "Entrando..." : "Entrar"}
